@@ -28,3 +28,13 @@ API dostępne jest pod:
 - http://localhost:8000/przelew/x/y/amount - żądanie przelewa "amount" gotówki z konta o id x na konto o id y pod warunkiem że konto x ma na to środki
 ### Skrypt testujący
 W folderze testTool jest skrypt testujący napisany w pythonie, zamieszczam tam oddzielne readme
+
+
+# TODO
+- frontend: razor
+- odpowiedź z receiver'ów. gRPC?
+- authentication
+- kilka baz danych?
+- raporty co tam zrobić
+- jak przetestować, czy jest jakiś tool?
+- vmmem wszystko mi zżera o co chodzi
