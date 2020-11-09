@@ -31,6 +31,7 @@ W folderze testTool jest skrypt testujący napisany w pythonie, zamieszczam tam 
 
 
 # TODO
+- czekanie na SQL'a i Rabbit'a w docker-compose?
 - frontend: razor
 - odpowiedź z receiver'ów. gRPC?
 - authentication
