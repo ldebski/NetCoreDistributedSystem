@@ -32,10 +32,12 @@ W folderze testTool jest skrypt testujący napisany w pythonie, zamieszczam tam 
 
 # TODO
 - czekanie na SQL'a i Rabbit'a w docker-compose?
-- frontend: razor
+- frontend: razor  2 widoki: stan konta, i możliwość zrobienia przelewu, dropdown'y, (stan kolejek nie koniecznie)
 - odpowiedź z receiver'ów. gRPC?
-- authentication
+- authentication <- to nie
 - kilka baz danych?
 - raporty co tam zrobić
 - jak przetestować, czy jest jakiś tool?
 - vmmem wszystko mi zżera o co chodzi
+- SCENARIUSZE TESTOWE NAJWAŻNIEJSZE
+- zapisywanie przelewów (kiedy dostaliśmy żądania, kiedy wykonaliśmy, jak je obsłużyliśmy)
