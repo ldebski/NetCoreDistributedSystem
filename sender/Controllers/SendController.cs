@@ -15,15 +15,17 @@ namespace sender.Controllers
     public class SendController : ControllerBase
     {
         private readonly IMessageService _messageService;
-        public SendController(IMessageService messageService)
+        private readonly IReplyMessageService _replyService;
+        public SendController(IMessageService messageService, IReplyMessageService replyService)
         {
             _messageService = messageService;
+            _replyService = replyService;
         }
 
         [HttpGet("przelew/{from}/{to}/{amount}")]
         public ActionResult<string> Przelew(string from, string to, string amount)
         {
-            string message = from + "." + to + "." + amount;
+            string message = Guid.NewGuid().ToString() + "." + from + "." + to + "." + amount;
             _messageService.Enqueue(message, "przelew");
             return message;
         }
@@ -31,7 +33,8 @@ namespace sender.Controllers
         [HttpGet("get/{id}")]
         public ActionResult<string> Get(string id)
         {
-            _messageService.Enqueue(id, "get");
+            string message = Guid.NewGuid().ToString() + "." + id;
+            _messageService.Enqueue(message, "get");
             return id;
         }
     }

@@ -10,31 +10,6 @@ namespace receiver
 {
     class Program
     {
-
-        // static public string CreateQuery(string message)
-        // {
-        //     var tab = message.Split(".");
-        //     var from = tab[0];
-        //     var to = tab[1];
-        //     var amount = tab[2];
-        //     string sql = $"IF (SELECT CashAmount FROM BankDataBase.dbo.Account WHERE AccountID = {from}) >= {amount}" +
-        //                  $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount - {amount} WHERE AccountID = {from};" +
-        //                  $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount + {amount} WHERE AccountID = {to};";
-        //     return sql;
-        // }
-        // 
-        // static public void DataBaseConnection(string message)
-        // {
-        //     string connectionString = @"Data Source=db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;";
-        //     SqlConnection cnn;
-        //     cnn = new SqlConnection(connectionString);
-        //     cnn.Open();
-        //     Console.WriteLine("connected to database, executing query");
-        //     SqlCommand command;
-        //     command = new SqlCommand(CreateQuery(message), cnn);
-        //     command.ExecuteNonQuery();
-        //     cnn.Close();
-        // }
         static void Main(string[] args)
         {
             Task.Delay(20000).Wait(); // waiting for rabbit & sql

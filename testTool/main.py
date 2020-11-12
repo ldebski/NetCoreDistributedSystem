@@ -3,7 +3,7 @@ import random
 import pyodbc
 import pandas as pd
 
-NUMBER_OF_QUERIES = 100000
+NUMBER_OF_QUERIES = 1000
 
 def main():
     cashAmountBefore = getCashQuery()

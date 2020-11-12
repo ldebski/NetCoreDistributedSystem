@@ -20,7 +20,7 @@ namespace receiverGet.Services
             cnn.Close();
         }
 
-        public void Query(string message)
+        public string Query(string message)
         {
             SqlDataReader dataReader;
             String query, Output = "";
@@ -29,9 +29,10 @@ namespace receiverGet.Services
             dataReader = command.ExecuteReader();
             while (dataReader.Read())
             {
-                Output = $"Id: {dataReader.GetValue(0)} Amount of money: {dataReader.GetValue(1)}";
+                // Output = $"Id: {dataReader.GetValue(0)} Amount of money: {dataReader.GetValue(1)}";
+                Output = $"{dataReader.GetValue(1)}";
             }
-            Console.WriteLine(Output);
+            return Output;
         }
     }
 }
