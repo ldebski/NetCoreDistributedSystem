@@ -25,7 +25,8 @@ namespace sender.Controllers
         [HttpGet("przelew/{from}/{to}/{amount}")]
         public ActionResult<string> Przelew(string from, string to, string amount)
         {
-            string message = Guid.NewGuid().ToString() + "." + from + "." + to + "." + amount;
+            // string message = Guid.NewGuid().ToString() + "." + from + "." + to + "." + amount;
+            string message = from + "." + to + "." + amount;
             _messageService.Enqueue(message, "przelew");
             return message;
         }
