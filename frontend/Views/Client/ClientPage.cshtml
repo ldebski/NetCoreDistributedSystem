@@ -1,0 +1,14 @@
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Search for client</h2>
+
+<div class="text-center">
+    <form asp-action="ClientPagePost" method="POST">
+        ID:
+        <input type="text" name="id"/>
+        <input type="submit"/>
+    </form>
+</div>
