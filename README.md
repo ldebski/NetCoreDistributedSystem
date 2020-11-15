@@ -29,6 +29,10 @@ API dostępne jest pod:
 ### Skrypt testujący
 W folderze testTool jest skrypt testujący napisany w pythonie, zamieszczam tam oddzielne readme
 
+# Frontend
+Frontend działa na porcie 80.
+W przeglądarce wystarczy wpisać: localhost (bez https !!)
+Zapytania do API lecą po http.
 
 # TODO
 - czekanie na SQL'a i Rabbit'a w docker-compose?
