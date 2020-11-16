@@ -11,3 +11,11 @@ Uruchomienie samego skryptu:
     python main.py
    
 **Do działania programu potrzebne jest żeby w tle działał uruchomiony program** 
+
+##performance-test.py
+
+Uruchomienie 
+
+python performance-test.py [liczba request]
+
+
