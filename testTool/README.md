@@ -12,10 +12,12 @@ Uruchomienie samego skryptu:
    
 **Do działania programu potrzebne jest żeby w tle działał uruchomiony program** 
 
-##performance-test.py
+## benchmark.py
 
 Uruchomienie 
 
-python performance-test.py [liczba request]
+python performance-test.py [liczba requestow]
+
+zmienna 'number_of_concurrent_tasks = 100' ustawia mozliwosc generowana 100 zapytan rownoczesnie
 
 
