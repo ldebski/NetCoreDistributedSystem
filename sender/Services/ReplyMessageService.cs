@@ -11,7 +11,7 @@ namespace sender.Services
 {
     public interface IReplyMessageService
     {
-        public ConcurrentDictionary<string, string> GetReplyDictionary();
+        public string GetFromDictionary(Guid guid);
     }
     public class ReplyMessageService: IReplyMessageService
     {
@@ -46,12 +46,19 @@ namespace sender.Services
                                     autoAck: true,
                                     consumer: consumer);
 
+            replyDict = new ConcurrentDictionary<string, string>();
+
             Console.WriteLine("Created replies handler");
         }
 
-        public ConcurrentDictionary<string, string> GetReplyDictionary()
+        public string GetFromDictionary(Guid guid)
         {
-            return replyDict;
+            string g = guid.ToString();
+            while (!replyDict.ContainsKey(g))
+            {
+                System.Threading.Thread.Sleep(100);
+            }
+            return replyDict[g];
         }
     }
 }

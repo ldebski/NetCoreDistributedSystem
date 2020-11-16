@@ -51,7 +51,7 @@ async def run(r, t):
 
 
 number_of_requests = int(sys.argv[1])
-number_of_concurrent_tasks = 100
+number_of_concurrent_tasks = 1000
 
 print("************Starting program************\n")
 print("Creating "+str(number_of_requests)+"requests, where number of concurrent tasks is " + str(number_of_concurrent_tasks))
@@ -79,9 +79,9 @@ cashAmountAfter = getCashQuery()
 
 for index in range(len(cashAmountBefore)):
     if cashAmountBefore[index] != cashAmountAfter[index]:
-        print("Error at id="+index)
-        print("Amount in database is:" + cashAmountAfter[index])
-        print("Should be:" + cashAmountBefore[index])
+        print("Error at id="+str(index))
+        print("Amount in database is:" + str(cashAmountAfter[index]))
+        print("Should be:" + str(cashAmountBefore[index]))
 
 print("TESTS PASSED")
 print("***********Ending program************\n")
