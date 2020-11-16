@@ -28,8 +28,10 @@ namespace front.Controllers
             
             var data = await httpClient.GetStringAsync(url);
 
-            ViewData["clientID"] = data;
-            ViewData["clientAmount"] = "?";
+            ViewData["clientFound"] = data.Equals("") ? "0" : "1";
+            ViewData["clientID"] = id;
+            ViewData["clientAmount"] = data;
+            
             return View();
         }
 
