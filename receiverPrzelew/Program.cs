@@ -15,7 +15,6 @@ namespace receiver
             Task.Delay(20000).Wait(); // waiting for rabbit & sql
             // creating connection to database
             DataBaseService dataBaseService = new DataBaseService();
-            Console.WriteLine("Consuming Queue Now");
 
             ConnectionFactory factory = new ConnectionFactory() { HostName = "rabbitmq", Port = 5672 };
             factory.UserName = "guest";
@@ -29,14 +28,41 @@ namespace receiver
                                     arguments: null);
 
             var consumer = new EventingBasicConsumer(channel);
+
+            Console.WriteLine("Consuming Queue Now");
+
             consumer.Received += (model, ea) =>
             {
+                string response = "";
                 var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
-                // Console.WriteLine(" [x] Received from Rabbit: {0}", message);
-                dataBaseService.Query(message);
-                Console.WriteLine(" [x] Done processing message from Rabbit : {0}", message);
+                // Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
+
+                var props = ea.BasicProperties;
+                var replyProps = channel.CreateBasicProperties();
+                // Console.WriteLine(props.ReplyTo);
+
+                try
+                {
+                    var message = Encoding.UTF8.GetString(body);
+                    response = dataBaseService.Query(message);
+                    response = message.Split(".")[0] + "." + response;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(" [.] " + e.Message);
+                    var message = Encoding.UTF8.GetString(body).Split(".");
+                    response = message[0] + "." + "error";
+                }
+                finally
+                {
+                    var responseBytes = Encoding.UTF8.GetBytes(response);
+                    channel.BasicPublish(exchange: "",
+                                         routingKey: props.ReplyTo,
+                                         basicProperties: replyProps,
+                                         body: responseBytes);
+                }
             };
+
             channel.BasicConsume(queue: "przelew",
                                     autoAck: true,
                                     consumer: consumer);

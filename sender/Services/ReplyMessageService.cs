@@ -36,7 +36,7 @@ namespace sender.Services
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
-                Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
+                // Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
                 var message = Encoding.UTF8.GetString(body);
                 var tab = message.Split(".");
                 replyDict.TryAdd(tab[0], tab[1]);

@@ -22,18 +22,19 @@ namespace receiverGet.Services
         string CreateQuery(string message)
         {
             var tab = message.Split(".");
-            string sql = $"IF (SELECT CashAmount FROM BankDataBase.dbo.Account WHERE AccountID = {tab[0]}) >= {tab[2]} " +
+            string sql = $"IF (SELECT CashAmount FROM BankDataBase.dbo.Account WHERE AccountID = {tab[1]}) >= {tab[3]} " +
                          $"BEGIN" +
-                         $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount - {tab[2]} WHERE AccountID = {tab[0]};" +
-                         $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount + {tab[2]} WHERE AccountID = {tab[1]};" +
+                         $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount - {tab[3]} WHERE AccountID = {tab[1]};" +
+                         $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount + {tab[3]} WHERE AccountID = {tab[2]};" +
                          $"END";
             return sql;
         }
 
-        public void Query(string message)
+        public string Query(string message)
         {
             SqlCommand command = new SqlCommand(CreateQuery(message), cnn);
             command.ExecuteNonQuery();
+            return "Transfer completed";
         }
     }
 }

@@ -88,9 +88,9 @@ cashAmountAfter = getCashQuery()
 
 for index in range(len(cashAmountBefore)):
     if cashAmountBefore[index] != cashAmountAfter[index]:
-        print("Error at id="+index)
-        print("Amount in database is:" + cashAmountAfter[index])
-        print("Should be:" + cashAmountBefore[index])
+        print("Error at id="+str(index))
+        print("Amount in database is:" + str(cashAmountAfter[index]))
+        print("Should be:" + str(cashAmountBefore[index]))
 
 print("TESTS PASSED")
 print("***********Ending program************\n")

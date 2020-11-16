@@ -35,14 +35,13 @@ namespace receiver
 
             consumer.Received += (model, ea) =>
             {
-                string response = null;
+                string response = "";
 
                 var body = ea.Body;
-                Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
+                // Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
 
                 var props = ea.BasicProperties;
                 var replyProps = channel.CreateBasicProperties();
-                Console.WriteLine(props.ReplyTo);
 
                 try
                 {

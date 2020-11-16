@@ -25,11 +25,11 @@ namespace sender.Controllers
         [HttpGet("przelew/{from}/{to}/{amount}")]
         public ActionResult<string> Przelew(string from, string to, string amount)
         {
-            // string message = Guid.NewGuid().ToString() + "." + from + "." + to + "." + amount;
-            Console.WriteLine("got message");
-            string message = from + "." + to + "." + amount;
+            Guid guid = Guid.NewGuid();
+            string message = guid.ToString() + "." + from + "." + to + "." + amount;
             _messageService.Enqueue(message, "przelew");
-            return message;
+            string reply = _replyService.GetFromDictionary(guid);
+            return reply;
         }
 
         [HttpGet("get/{id}")]
