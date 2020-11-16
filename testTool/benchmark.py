@@ -5,6 +5,7 @@ import sys
 from aiohttp import ClientSession
 import pyodbc
 import pandas as pd
+import time
 
 async def fetch(url, session):
     async with session.get(url) as response:
@@ -51,10 +52,10 @@ async def run(r, t):
 
 
 number_of_requests = int(sys.argv[1])
-number_of_concurrent_tasks = 1000
+number_of_concurrent_tasks = 100
 
 print("************Starting program************\n")
-print("Creating "+str(number_of_requests)+"requests, where number of concurrent tasks is " + str(number_of_concurrent_tasks))
+print("Creating "+str(number_of_requests)+" requests, where number of concurrent tasks is " + str(number_of_concurrent_tasks))
 
 from_id = []
 to_id = []
@@ -64,8 +65,16 @@ cashAmountBefore = getCashQuery()
 loop = asyncio.get_event_loop()
 
 future = asyncio.ensure_future(run(number_of_requests, number_of_concurrent_tasks))
-loop.run_until_complete(future)
 
+start_time = time.time()
+loop.run_until_complete(future)
+duration = time.time() - start_time
+
+one_request_time = duration/number_of_requests
+
+print("All requests sent in: "+str(duration)+"s")
+print("Average time of one request: "+str(one_request_time)+"s")
+print("Number of requests in 1 second: "+str(number_of_requests/duration))
 
 for index in range(len(from_id)):
     if cashAmountBefore[from_id[index]] >= amount[index]:
@@ -79,9 +88,9 @@ cashAmountAfter = getCashQuery()
 
 for index in range(len(cashAmountBefore)):
     if cashAmountBefore[index] != cashAmountAfter[index]:
-        print("Error at id="+str(index))
-        print("Amount in database is:" + str(cashAmountAfter[index]))
-        print("Should be:" + str(cashAmountBefore[index]))
+        print("Error at id="+index)
+        print("Amount in database is:" + cashAmountAfter[index])
+        print("Should be:" + cashAmountBefore[index])
 
 print("TESTS PASSED")
 print("***********Ending program************\n")
