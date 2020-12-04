@@ -1,0 +1,38 @@
+CLI:
+
+CREATE TOPIC
+	kafka-topics --zookeeper zookeeper:2181 --topic first_topic --create --partitions 3 --replication-factor 2
+
+TOPIC LIST
+	kafka-topics --zookeeper zookeeper:2181 --list
+	
+TOPIC DESCRIBTION
+	kafka-topics --zookeeper zookeeper:2181 --topic first_topic --describe
+	
+DELETE TOPIC
+	kafka-topics --zookeeper zookeeper:2181 --topic second_topic --delete
+	
+	
+PRODUCE TO TOPIC
+	kafka-console-producer --broker-list kafka:9092 --topic first_topic --producer-property acks=all
+	
+CONSUME FROM TOPIC, consumes only message that were sent after creating this consumer
+	kafka-console-consumer --bootstrap-server kafka:9092 --topic first_topic
+	
+CONSUME FROM TOPIC, all from beginning
+	kafka-console-consumer --bootstrap-server kafka:9092 --topic first_topic --from-beginning
+	
+CONSUME FROM TOPIC, with group from beginning
+	kafka-console-consumer --bootstrap-server kafka:9092 --topic first_topic --group my-first-app --from-beginning
+
+CONSUMER GROUP LIST
+	kafka-consumer-groups --bootstrap-server kafka:9092 --list
+	
+
+CONSUMER GROUP DESCRIBE
+	kafka-consumer-groups --bootstrap-server kafka:9092 --describe --group my-first-app
+	
+CONSUMER GROUP RESET OFFSET
+	kafka-consumer-groups --bootstrap-server kafka:9092 --group my-first-app --reset-offsets --to-earliest --execute --topic first_topic
+CONSUMER SHIFT OFFSET OF EVERY PARTITION (-2 = 2 backwards, 2 = 2 forward)
+	kafka-consumer-groups --bootstrap-server kafka:9092 --group my-first-app --reset-offsets --shift-by -2 --execute --topic first_topic
