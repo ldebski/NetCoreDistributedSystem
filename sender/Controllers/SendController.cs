@@ -23,23 +23,31 @@ namespace sender.Controllers
         }
 
         [HttpGet("przelew/{from}/{to}/{amount}")]
-        public ActionResult<string> Przelew(string from, string to, string amount)
+        public async Task<ActionResult<string>> Przelew(string from, string to, string amount)
         {
+            // Console.WriteLine("Got message");
             Guid guid = Guid.NewGuid();
             string message = guid.ToString() + "." + from + "." + to + "." + amount;
-            _messageService.Enqueue(message, "przelew");
-            string reply = _replyService.GetFromDictionary(guid);
-            return reply;
+            ReplyObserver observer = new ReplyObserver();
+            _replyService.addObserver(guid.ToString(), observer);
+            _messageService.Enqueue(message, "przelew"); // wysyla do serwerow
+            var reply = await observer.WaitForReply(); // czekam na odp z serwerow
+            // Console.WriteLine("Got reply: " + reply);
+            return reply.ToString();
         }
 
         [HttpGet("get/{id}")]
-        public ActionResult<string> Get(string id)
+        public async Task<ActionResult<string>> Get(string id)
         {
             Guid guid = Guid.NewGuid();
             string message = guid.ToString() + "." + id;
             _messageService.Enqueue(message, "get");
-            string reply = _replyService.GetFromDictionary(guid);
-            return reply;
+            ReplyObserver observer = new ReplyObserver();
+            _replyService.addObserver(guid.ToString(), observer);
+            var reply = await observer.WaitForReply();
+            return reply.ToString();
+            // string reply = _replyService.GetFromDictionary(guid);
+            // return reply;
         }
     }
 }

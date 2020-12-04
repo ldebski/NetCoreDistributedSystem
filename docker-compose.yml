@@ -7,7 +7,7 @@ services:
     labels:
       NAME: "rabbitmq"
     ports:
-    - "4369:4369" # for clastering
+    - "4369:4369" # for clustering
     - "5671:5671"
     - "5672:5672" # main port for communication
     - "25672:25672"
@@ -20,10 +20,20 @@ services:
     #     retries: 5
     logging:
       driver: none # disabling logs
-  db:
-      build: ./sql
+  accounts_db:
+      build: ./accounts_db/
       ports:
           - "1433:1433"
+      environment:
+          SA_PASSWORD: "STRONGpassword123!"
+          ACCEPT_EULA: "Y"
+      logging:
+          driver: none # disabling logs
+          
+  transfers_db:
+      build: ./transfers_db/
+      ports:
+          - "1434:1434"
       environment:
           SA_PASSWORD: "STRONGpassword123!"
           ACCEPT_EULA: "Y"
@@ -35,23 +45,38 @@ services:
     restart: always
     depends_on:
       - rabbitmq
-      - db
+      - accounts_db
+      - transfers_db
       
   receiverprzelew:
     build: ./receiverPrzelew/
     restart: always
     depends_on:
       - rabbitmq
-      - db
+      - accounts_db
+      - transfers_db
         
   sender:
     build: ./sender/
     restart: always
     ports:
         - "8000:80"
+    depends_on:
+      - transfers_db
         
   front:
     build: ./frontend/
     restart: always
     ports:
         - "80:80"
+        
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+       - "5775:5775/udp"
+       - "6831:6831/udp"
+       - "6832:6832/udp"
+       - "5778:5778"
+       - "16686:16686" # frontend
+       - "14268:14268" # collector
+       - "9411:9411"

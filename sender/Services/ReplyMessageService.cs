@@ -11,14 +11,14 @@ namespace sender.Services
 {
     public interface IReplyMessageService
     {
-        public string GetFromDictionary(Guid guid);
+        public void addObserver(String guid, ReplyObserver obsever);
     }
     public class ReplyMessageService: IReplyMessageService
     {
         readonly IModel _channel;
         private readonly string replyQueueName;
         private EventingBasicConsumer consumer;
-        public ConcurrentDictionary<string, string> replyDict;
+        public ReplyObserverHandler observerHandler;
 
         public ReplyMessageService(IRabbitService rabbitService)
         {
@@ -39,26 +39,23 @@ namespace sender.Services
                 // Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
                 var message = Encoding.UTF8.GetString(body);
                 var tab = message.Split(".");
-                replyDict.TryAdd(tab[0], tab[1]);
+                observerHandler.SetObserver(tab[0], tab[1]);
+                // replyDict.TryAdd(tab[0], tab[1]);
             };
 
             _channel.BasicConsume(queue: replyQueueName,
                                     autoAck: true,
                                     consumer: consumer);
 
-            replyDict = new ConcurrentDictionary<string, string>();
+            observerHandler = new ReplyObserverHandler();
 
             Console.WriteLine("Created replies handler");
         }
 
-        public string GetFromDictionary(Guid guid)
+        public void addObserver(string guid, ReplyObserver obsever)
         {
-            string g = guid.ToString();
-            while (!replyDict.ContainsKey(g))
-            {
-                System.Threading.Thread.Sleep(100);
-            }
-            return replyDict[g];
+            observerHandler.Subscribe(guid, obsever);
         }
+
     }
 }

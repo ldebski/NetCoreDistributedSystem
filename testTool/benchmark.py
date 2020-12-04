@@ -8,8 +8,9 @@ import pandas as pd
 import time
 
 async def fetch(url, session):
+    # print("creating request");
     async with session.get(url) as response:
-        #print(response.status)
+        # print(response.status)
         if response.status != 200:
             raise NameError("RESPONSE STATUS: "+response.status)
         return await response.read()
@@ -52,7 +53,7 @@ async def run(r, t):
 
 
 number_of_requests = int(sys.argv[1])
-number_of_concurrent_tasks = 100
+number_of_concurrent_tasks = 5000
 
 print("************Starting program************\n")
 print("Creating "+str(number_of_requests)+" requests, where number of concurrent tasks is " + str(number_of_concurrent_tasks))

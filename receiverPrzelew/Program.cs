@@ -46,6 +46,7 @@ namespace receiver
                     var message = Encoding.UTF8.GetString(body);
                     response = dataBaseService.Query(message);
                     response = message.Split(".")[0] + "." + response;
+                    response = message.Split(".")[0] + "." + message.Split(".")[0];
                 }
                 catch (Exception e)
                 {

@@ -10,7 +10,7 @@ namespace receiverGet.Services
         SqlConnection cnn;
         public DataBaseService()
         {
-            string connectionString = @"Data Source=db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;MultipleActiveResultSets=True;";
+            string connectionString = @"Data Source=accounts_db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;MultipleActiveResultSets=True;";
             cnn = new SqlConnection(connectionString);
             cnn.Open();
             Console.WriteLine("Successfully connected to database!");

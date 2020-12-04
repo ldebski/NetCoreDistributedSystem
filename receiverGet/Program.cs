@@ -35,6 +35,7 @@ namespace receiver
 
             consumer.Received += (model, ea) =>
             {
+                Console.WriteLine("got message");
                 string response = "";
 
                 var body = ea.Body;
@@ -45,6 +46,7 @@ namespace receiver
 
                 try
                 {
+                    Console.WriteLine("query time");
                     var message = Encoding.UTF8.GetString(body).Split(".");
                     response = dataBaseService.Query(message[1]);
                     response = message[0] + "." + response;
@@ -57,18 +59,21 @@ namespace receiver
                 }
                 finally
                 {
+                    Console.WriteLine("Responding");
                     var responseBytes = Encoding.UTF8.GetBytes(response);
                     channel.BasicPublish(exchange: "",
                                          routingKey: props.ReplyTo,
                                          basicProperties: replyProps,
                                          body: responseBytes);
-                    Console.WriteLine("Done");
+                    Console.WriteLine("Done responding");
                 }
             };
 
             channel.BasicConsume(queue: "get",
                                     autoAck: true,
                                     consumer: consumer);
+
+            Console.WriteLine("Exiting");
         }
     }
 }
