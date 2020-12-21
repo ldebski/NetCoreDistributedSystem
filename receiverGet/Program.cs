@@ -1,33 +1,30 @@
-﻿using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using receiverGet.Services;
-using System;
-using System.Data.SqlClient;
+﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using kafka;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace receiver
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Task.Delay(20000).Wait(); // waiting for rabbit & sql
-            Console.WriteLine("Consuming Queue Now");
+            // DataBaseService dataBaseService = new DataBaseService();
+            var kafkaProducerHostedService = new KafkaProducerHostedService();
 
-            // creating connection to database
-            DataBaseService dataBaseService = new DataBaseService();
-
-            ConnectionFactory factory = new ConnectionFactory() { HostName = "rabbitmq", Port = 5672 };
+            var factory = new ConnectionFactory {HostName = "rabbitmq", Port = 5672};
             factory.UserName = "guest";
             factory.Password = "guest";
-            IConnection conn = factory.CreateConnection();
-            IModel channel = conn.CreateModel();
-            channel.QueueDeclare(queue: "get",
-                                    durable: false,
-                                    exclusive: false,
-                                    autoDelete: false,
-                                    arguments: null);
+            var conn = factory.CreateConnection();
+            var channel = conn.CreateModel();
+            channel.QueueDeclare("get",
+                false,
+                false,
+                false,
+                null);
 
             var consumer = new EventingBasicConsumer(channel);
 
@@ -35,45 +32,25 @@ namespace receiver
 
             consumer.Received += (model, ea) =>
             {
-                Console.WriteLine("got message");
-                string response = "";
-
                 var body = ea.Body;
-                // Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
-
-                var props = ea.BasicProperties;
-                var replyProps = channel.CreateBasicProperties();
 
                 try
                 {
-                    Console.WriteLine("query time");
-                    var message = Encoding.UTF8.GetString(body).Split(".");
-                    response = dataBaseService.Query(message[1]);
-                    response = message[0] + "." + response;
+                    var message = Encoding.UTF8.GetString(body);
+                    var msgSplit = message.Split(".");
+                    Console.Out.WriteLine("I'm putting message from: " + msgSplit[1] + " to kafka");
+                    kafkaProducerHostedService.StartAsync(msgSplit[0], msgSplit[1]);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(" [.] " + e.Message);
                     var message = Encoding.UTF8.GetString(body).Split(".");
-                    response = message[0] + "." + "error";
-                }
-                finally
-                {
-                    Console.WriteLine("Responding");
-                    var responseBytes = Encoding.UTF8.GetBytes(response);
-                    channel.BasicPublish(exchange: "",
-                                         routingKey: props.ReplyTo,
-                                         basicProperties: replyProps,
-                                         body: responseBytes);
-                    Console.WriteLine("Done responding");
                 }
             };
 
-            channel.BasicConsume(queue: "get",
-                                    autoAck: true,
-                                    consumer: consumer);
-
-            Console.WriteLine("Exiting");
+            channel.BasicConsume("get",
+                true,
+                consumer);
         }
     }
 }

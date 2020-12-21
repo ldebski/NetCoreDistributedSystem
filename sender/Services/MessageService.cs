@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
 namespace sender.Services
 {
@@ -13,32 +11,34 @@ namespace sender.Services
 
     public class MessageService : IMessageService
     {
-        readonly IModel _channel;
-        private readonly string replyQueueName;
+        private readonly IModel _channel;
         private readonly IBasicProperties props;
+        private readonly string replyQueueName;
+
         public MessageService(IRabbitService rabbitService)
         {
             _channel = rabbitService.GetChannel();
 
             replyQueueName = rabbitService.GetReplyQueueName();
             _channel.QueueDeclare(replyQueueName,
-                               durable: false,
-                               exclusive: false,
-                               autoDelete: false,
-                               arguments: null);
+                false,
+                false,
+                false,
+                null);
 
             props = _channel.CreateBasicProperties();
             props.ReplyTo = replyQueueName;
 
             Console.WriteLine("Created messages handler");
         }
+
         public bool Enqueue(string messageString, string queueName)
         {
             var body = Encoding.UTF8.GetBytes(messageString);
-            _channel.BasicPublish(exchange: "",
-                            routingKey: queueName,
-                            basicProperties: props,
-                            body: body);
+            _channel.BasicPublish("",
+                queueName,
+                props,
+                body);
             return true;
         }
     }

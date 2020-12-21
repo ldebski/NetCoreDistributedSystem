@@ -1,23 +1,20 @@
-﻿using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Text;
-using System.Threading.Tasks;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace sender.Services
 {
     public interface IReplyMessageService
     {
-        public void addObserver(String guid, ReplyObserver obsever);
+        public void addObserver(string guid, ReplyObserver obsever);
     }
-    public class ReplyMessageService: IReplyMessageService
+
+    public class ReplyMessageService : IReplyMessageService
     {
-        readonly IModel _channel;
+        private readonly IModel _channel;
         private readonly string replyQueueName;
-        private EventingBasicConsumer consumer;
+        private readonly EventingBasicConsumer consumer;
         public ReplyObserverHandler observerHandler;
 
         public ReplyMessageService(IRabbitService rabbitService)
@@ -25,27 +22,25 @@ namespace sender.Services
             _channel = rabbitService.GetChannel();
             replyQueueName = rabbitService.GetReplyQueueName();
 
-            _channel.QueueDeclare(queue: replyQueueName,
-                                    durable: false,
-                                    exclusive: false,
-                                    autoDelete: false,
-                                    arguments: null);
+            _channel.QueueDeclare(replyQueueName,
+                false,
+                false,
+                false,
+                null);
 
             consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
-                // Console.WriteLine("got message: " + Encoding.UTF8.GetString(body));
                 var message = Encoding.UTF8.GetString(body);
                 var tab = message.Split(".");
                 observerHandler.SetObserver(tab[0], tab[1]);
-                // replyDict.TryAdd(tab[0], tab[1]);
             };
 
-            _channel.BasicConsume(queue: replyQueueName,
-                                    autoAck: true,
-                                    consumer: consumer);
+            _channel.BasicConsume(replyQueueName,
+                true,
+                consumer);
 
             observerHandler = new ReplyObserverHandler();
 
@@ -56,6 +51,5 @@ namespace sender.Services
         {
             observerHandler.Subscribe(guid, obsever);
         }
-
     }
 }

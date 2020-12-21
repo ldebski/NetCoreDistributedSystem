@@ -1,57 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace sender.Services
 {
-    public class ReplyObserver : IObserver<String>
+    public class ReplyObserver : IObserver<string>
     {
-        private IDisposable unsubscriber;
-        public String accountMoney { get; set; }
+        private IDisposable _unsubscriber;
 
-        public ReplyObserver() { accountMoney = ""; }
-
-        public virtual void Subscribe(IObservable<String> provider)
+        public ReplyObserver()
         {
-            unsubscriber = provider.Subscribe(this);
+            accountMoney = "";
         }
 
-        public virtual void Unsubscribe()
-        {
-            unsubscriber.Dispose();
-        }
+        public string accountMoney { get; set; }
+
         public virtual void OnCompleted()
         {
             // do nothing
         }
+
         public virtual void OnError(Exception error)
         {
             // do nothing
         }
 
-        public virtual void OnNext(String value)
+        public virtual void OnNext(string value)
         {
             accountMoney = value;
         }
 
-        public void SetValue(String val)
+        public virtual void Subscribe(IObservable<string> provider)
+        {
+            _unsubscriber = provider.Subscribe(this);
+        }
+
+        public virtual void Unsubscribe()
+        {
+            _unsubscriber.Dispose();
+        }
+
+        public void SetValue(string val)
         {
             accountMoney = val;
         }
-        
-        public String GetValue()
+
+        public string GetValue()
         {
             return accountMoney;
         }
 
-        public async Task<String> WaitForReply()
+        public async Task<string> WaitForReply()
         {
             await Task.Run(async () =>
-             {
-                 while (accountMoney.Equals("")) { await Task.Delay(25);
-                 }
-             });
+            {
+                while (accountMoney.Equals("")) await Task.Delay(25);
+            });
             return accountMoney;
         }
     }

@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace receiverGet.Services
 {
     public class DataBaseService
     {
-        SqlConnection cnn;
+        private readonly SqlConnection cnn;
+
         public DataBaseService()
         {
-            string connectionString = @"Data Source=accounts_db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;MultipleActiveResultSets=True;";
+            var connectionString =
+                @"Data Source=accounts_db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;MultipleActiveResultSets=True;";
             cnn = new SqlConnection(connectionString);
             cnn.Open();
             Console.WriteLine("Successfully connected to database!");
         }
+
         ~DataBaseService()
         {
             cnn.Close();
@@ -23,15 +24,13 @@ namespace receiverGet.Services
         public string Query(string message)
         {
             SqlDataReader dataReader;
-            String query, Output = "";
+            string query, Output = "";
             query = $"SELECT * FROM BankDataBase.dbo.Account WHERE AccountID = {message};";
-            SqlCommand command = new SqlCommand(query, cnn);
+            var command = new SqlCommand(query, cnn);
             dataReader = command.ExecuteReader();
             while (dataReader.Read())
-            {
                 // Output = $"Id: {dataReader.GetValue(0)} Amount of money: {dataReader.GetValue(1)}";
                 Output = $"{dataReader.GetValue(1)}";
-            }
             return Output;
         }
     }

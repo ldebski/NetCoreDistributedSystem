@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using sender.Commands;
+using sender.Queries;
 using sender.Services;
-using sender.Models;
 
 namespace sender.Controllers
 {
@@ -14,40 +12,26 @@ namespace sender.Controllers
     [ApiController]
     public class SendController : ControllerBase
     {
-        private readonly IMessageService _messageService;
-        private readonly IReplyMessageService _replyService;
-        public SendController(IMessageService messageService, IReplyMessageService replyService)
-        {
-            _messageService = messageService;
-            _replyService = replyService;
-        }
+        private readonly IMediator _mediator;
 
-        [HttpGet("przelew/{from}/{to}/{amount}")]
-        public async Task<ActionResult<string>> Przelew(string from, string to, string amount)
+        public SendController(IMessageService messageService, IReplyMessageService replyService, IMediator mediator)
         {
-            // Console.WriteLine("Got message");
-            Guid guid = Guid.NewGuid();
-            string message = guid.ToString() + "." + from + "." + to + "." + amount;
-            ReplyObserver observer = new ReplyObserver();
-            _replyService.addObserver(guid.ToString(), observer);
-            _messageService.Enqueue(message, "przelew"); // wysyla do serwerow
-            var reply = await observer.WaitForReply(); // czekam na odp z serwerow
-            // Console.WriteLine("Got reply: " + reply);
-            return reply.ToString();
+            _mediator = mediator;
+        }
+        
+        [HttpPost("przelew")]
+        public async Task<ActionResult<string>> Przelew([FromBody] CreateTransactionCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return result != null ? (ActionResult<string>) Ok(result) : BadRequest();
         }
 
         [HttpGet("get/{id}")]
-        public async Task<ActionResult<string>> Get(string id)
+        public async Task<ActionResult<string>> GetAccountByIdQuery(string id)
         {
-            Guid guid = Guid.NewGuid();
-            string message = guid.ToString() + "." + id;
-            _messageService.Enqueue(message, "get");
-            ReplyObserver observer = new ReplyObserver();
-            _replyService.addObserver(guid.ToString(), observer);
-            var reply = await observer.WaitForReply();
-            return reply.ToString();
-            // string reply = _replyService.GetFromDictionary(guid);
-            // return reply;
+            var query = new GetAccountByIdQuery(id);
+            var result = await _mediator.Send(query);
+            return result != null ? (ActionResult<string>) Ok(result) : NotFound();
         }
     }
 }

@@ -1,5 +1,3 @@
-using System;
-
 namespace front.Models
 {
     public class ErrorViewModel

@@ -1,33 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace receiverGet.Services
 {
     public class DataBaseService
     {
-        SqlConnection cnn;
+        private readonly SqlConnection cnn;
+
         public DataBaseService()
         {
-            string connectionString = @"Data Source=accounts_db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;MultipleActiveResultSets=True;";
+            var connectionString =
+                @"Data Source=accounts_db;Initial Catalog=BankDataBase;User Id=sa; Password=STRONGpassword123!;MultipleActiveResultSets=True;";
             cnn = new SqlConnection(connectionString);
             cnn.Open();
             Console.WriteLine("Successfully connected to database!");
         }
+
         ~DataBaseService()
         {
             cnn.Close();
         }
-        string CreateQuery(string message)
+
+        private string CreateQuery(string message)
         {
             // Console.WriteLine(message);
             var tab = message.Split(".");
-            string sql = $"IF (SELECT CashAmount FROM BankDataBase.dbo.Account WHERE AccountID = {tab[1]}) >= {tab[3]} " +
-                         $"BEGIN" +
-                         $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount - {tab[3]} WHERE AccountID = {tab[1]};" +
-                         $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount + {tab[3]} WHERE AccountID = {tab[2]};" +
-                         $"END";
+            var sql = $"IF (SELECT CashAmount FROM BankDataBase.dbo.Account WHERE AccountID = {tab[1]}) >= {tab[3]} " +
+                      "BEGIN" +
+                      $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount - {tab[3]} WHERE AccountID = {tab[1]};" +
+                      $"    UPDATE BankDataBase.dbo.Account SET CashAmount = CashAmount + {tab[3]} WHERE AccountID = {tab[2]};" +
+                      "END";
 
             // weź stan tymczasowy wszystkie dotychczasowe żądania z tego konta sprawdź czy możesz 
             return sql;
@@ -47,7 +49,7 @@ namespace receiverGet.Services
 
         public string Query(string message)
         {
-            SqlCommand command = new SqlCommand(CreateQuery(message), cnn);
+            var command = new SqlCommand(CreateQuery(message), cnn);
             command.ExecuteNonQuery();
             return "Transfer completed";
         }

@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,13 +22,13 @@ namespace front.Controllers
             var url = $"http://sender/send/get/{id}";
 
             Console.WriteLine(url);
-            
+
             var data = await httpClient.GetStringAsync(url);
 
             ViewData["clientFound"] = data.Equals("") ? "0" : "1";
             ViewData["clientID"] = id;
             ViewData["clientAmount"] = data;
-            
+
             return View();
         }
 
@@ -41,13 +38,14 @@ namespace front.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
         [Route("wykonaj-przelew")]
-        public async Task<IActionResult> WykonajPrzelewPagePost([FromForm] string from, [FromForm] string to, [FromForm] string amount)
+        public async Task<IActionResult> WykonajPrzelewPagePost([FromForm] string from, [FromForm] string to,
+            [FromForm] string amount)
         {
             var httpClient = HttpClientFactory.Create();
-            
+
             var url = $"http://sender/przelew/{from}/{to}/{amount}";
 
             try
@@ -58,7 +56,7 @@ namespace front.Controllers
             {
                 Console.Write(e);
             }
-            
+
             return View();
         }
     }

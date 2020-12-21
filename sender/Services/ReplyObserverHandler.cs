@@ -1,38 +1,33 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace sender.Services
 {
     public class ReplyObserverHandler // : IObservable<int>
     {
-        ConcurrentDictionary<String, IObserver<String>> observers;
-        // List<IObserver<int>> observers;
+        private readonly ConcurrentDictionary<string, IObserver<string>> observers;
 
         public ReplyObserverHandler()
         {
-            observers = new ConcurrentDictionary<String, IObserver<String>>();
+            observers = new ConcurrentDictionary<string, IObserver<string>>();
         }
 
-        public void Unsubsribe(String guid)
+        public void Unsubsribe(string guid)
         {
             observers.TryRemove(guid, out _);
         }
 
-        public void Subscribe(String guid, IObserver<String> observer)
+        public void Subscribe(string guid, IObserver<string> observer)
         {
-            String p = "Subsribing observer: " + guid;
+            var p = "Subsribing observer: " + guid;
             if (!observers.ContainsKey(guid))
                 observers[guid] = observer;
         }
 
-        public void SetObserver(String guid, String val)
+        public void SetObserver(string guid, string val)
         {
-            String p = "Setting observer for: " + guid;
-            ReplyObserver observer = (ReplyObserver) observers[guid];
+            var p = "Setting observer for: " + guid;
+            var observer = (ReplyObserver) observers[guid];
             observer.SetValue(val);
             Unsubsribe(guid);
         }

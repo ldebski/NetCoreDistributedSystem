@@ -45,23 +45,17 @@ namespace kafka
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            int[] vs = { 0, 100, 50, -150, -50, 50, -100, 100, 100, 100, 100, -100, 200, -300, 400 };
-            for (var i = 0; i < 10; i++)
+            int[] vs = { -200 };
+            for (var i = 0; i < 1; i++)
             {
                 Thread.Sleep(100);
-                Transaction transaction = new Transaction("1", "2", vs[i]);
+                Transaction transaction = new Transaction("1", "2", vs[i], 0, "false");
             
                 string value = JsonConvert.SerializeObject(transaction);
-                // var value = $"Hello {i}";
-                var key = $"id";
-                var topic = "my_topic";
+                var key = $"id37";
+                var topic = "firstTopic";
                 this._logger.LogInformation(value);
                 this._logger.LogInformation("Key: " + key);
-                // for synchronous
-                // Action<DeliveryReport<string, string>> handler = r =>
-                //                                     Console.WriteLine(!r.Error.IsError
-                //                                         ? $"Delivered message to {r.TopicPartitionOffset}"
-                //                                         : $"Delivery Error: {r.Error.Reason}");
                 DeliveryResult<string, string> deliveryResult = await _producer.ProduceAsync(topic, new Message<string, string>()
                 {
                     Value = value,
