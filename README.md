@@ -1,5 +1,6 @@
+# WIP
 # NetCoreDistributedSystem
-opis
+
 # Uruchamianie
 Uruchamianie projektu:
 
@@ -12,16 +13,6 @@ Polecenia te utworzą:
 - Bazę danych SQL
 - X procesów zajmujących się przelewami, Y procesów zajmujących się get'ami które biorą żądanie z kolejki i wykonują odpowiednie query na bazie danych
 
-
-# SQL
-W bazie danych tworzony jest database BankDataBase z tabelą do której umieszczane jest 1000 wartości (AccountID 0-999 i losowe CashAmount)
-
-```
-Account {
-  AccountID int NOT NULL UNIQUE,
-  CashAmount int
-}
-```
 # API
 API dostępne jest pod:
 - http://localhost:8000/send/get/x - żądanie robi "SELECT CashAmount FROM Account WHERE AccountID = x":
@@ -31,17 +22,5 @@ W folderze testTool jest skrypt testujący napisany w pythonie, zamieszczam tam 
 
 # Frontend
 Frontend działa na porcie 80.
-W przeglądarce wystarczy wpisać: localhost (bez https !!)
+W przeglądarce wystarczy wpisać: localhost
 Zapytania do API lecą po http.
-
-# TODO
-- czekanie na SQL'a i Rabbit'a w docker-compose?
-- frontend: razor  2 widoki: stan konta, i możliwość zrobienia przelewu, dropdown'y, (stan kolejek nie koniecznie)
-- odpowiedź z receiver'ów. gRPC?
-- authentication <- to nie
-- kilka baz danych?
-- raporty co tam zrobić
-- jak przetestować, czy jest jakiś tool?
-- vmmem wszystko mi zżera o co chodzi
-- SCENARIUSZE TESTOWE NAJWAŻNIEJSZE
-- zapisywanie przelewów (kiedy dostaliśmy żądania, kiedy wykonaliśmy, jak je obsłużyliśmy)
